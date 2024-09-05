@@ -20,13 +20,19 @@ builder.Logging.AddOpenTelemetry(options =>
         .AddConsoleExporter();
 });
 builder.Services.AddOpenTelemetry()
-      .ConfigureResource(resource => resource.AddService(serviceName))
-      .WithTracing(tracing => tracing
-          .AddAspNetCoreInstrumentation()
-          .AddConsoleExporter())
-      .WithMetrics(metrics => metrics
-          .AddAspNetCoreInstrumentation()
-          .AddConsoleExporter());
+    .ConfigureResource(resource => resource.AddService(serviceName))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddConsoleExporter()
+        .AddOtlpExporter())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddConsoleExporter()
+        .AddOtlpExporter())
+    .WithLogging(logs => logs
+        .AddConsoleExporter()
+        .AddOtlpExporter()
+    );
 
 var app = builder.Build();
 
