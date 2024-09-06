@@ -1,50 +1,15 @@
-# Example - Telemetry for .NET App
+# Example - Connect .NET App to dash0
 
-Basically, this example was created according to the instructions on the [Getting Started](https://opentelemetry.io/docs/languages/net/getting-started/) page.
-
-The following adjustments have been made to ensure that the logs and traces are also sent to the collector:
+This is an example of how the .NET application can be connected to dash0.
+The application and the OpenTelemetry Collector can be started as follows.
 
 ```sh
-> dotnet add package OpenTelemetry.Exporter.OpenTelemetryProtocol
+> export BEARER_TOKEN=[YOUR_DASH0_ORG_AUTH_TOKEN]
+> export DASH0_ENDPOINT=[DASH0_URL_WITH_PORT]
+> docker compose up --build
 ```
 
-**appsettings.json**
+Once both Docker containers have been successfully started
+the application can be opened at <http://localhost:8080/rolldice>.
 
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    },
-    "OpenTelemetry": {
-      "IncludeFormattedMessage": true,
-      "IncludeScopes": true,
-      "ParseStateValues": true
-    }
-  },
-  "Otlp": {
-    "Endpoint": "http://localhost:4317"
-  },
-  "AllowedHosts": "*",
-}
-```
-
-**Program.cs**
-
-```csharp
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService(serviceName))
-    .WithTracing(tracing => tracing
-        .AddAspNetCoreInstrumentation()
-        .AddConsoleExporter()
-        .AddOtlpExporter())
-    .WithMetrics(metrics => metrics
-        .AddAspNetCoreInstrumentation()
-        .AddConsoleExporter()
-        .AddOtlpExporter())
-    .WithLogging(logs => logs
-        .AddConsoleExporter()
-        .AddOtlpExporter()
-    );
-```
+If everything works correctly, you should now see the logs, traces and metrics at dash0.
